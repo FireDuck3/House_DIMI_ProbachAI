@@ -13,5 +13,5 @@
   "validation_rmse_log": 0.1265744358275528,
   "target_transform": "natural logarithm",
   "validation_split": 0.2,
-  "validation_note": "Single 80/20 holdout; not a Kaggle leaderboard score"
+  "validation_note": "80/20 holdout; this is not a Kaggle leaderboard score"
 }
