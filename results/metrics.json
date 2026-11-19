@@ -1,0 +1,17 @@
+{
+  "dataset": "Kaggle House Prices - Advanced Regression Techniques",
+  "seed": 42,
+  "train_rows": 1460,
+  "validation_rows": 292,
+  "final_training_rows": 1460,
+  "baseline_rmse_log": 0.43324686081152136,
+  "candidate_rmse_log": {
+    "XGBoost_200": 0.13195957150111084,
+    "XGBoost_600": 0.1265744358275528
+  },
+  "selected_model": "XGBoost_600",
+  "validation_rmse_log": 0.1265744358275528,
+  "target_transform": "natural logarithm",
+  "validation_split": 0.2,
+  "validation_note": "Single 80/20 holdout; not a Kaggle leaderboard score"
+}

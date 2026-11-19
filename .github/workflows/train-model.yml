@@ -1,0 +1,54 @@
+name: Train House Prices XGBoost
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - train.py
+      - requirements.txt
+      - .github/workflows/train-model.yml
+
+permissions:
+  contents: write
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install packages
+        run: python -m pip install -r requirements.txt
+
+      - name: Download exact Kaggle competition datasets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data
+          curl --fail --location --retry 3 --silent --show-error \
+            https://raw.githubusercontent.com/Rswcf/houseprices_kaggle/master/train.csv -o data/train.csv
+          curl --fail --location --retry 3 --silent --show-error \
+            https://raw.githubusercontent.com/Rswcf/houseprices_kaggle/master/test.csv -o data/test.csv
+          test "$(git hash-object data/train.csv)" = "d68e0d76ce5c7d0e20e7883a48893a9696d3a041"
+          test "$(git hash-object data/test.csv)" = "a19c5c7b69afd0814b0dd06ca2ff363dec3fffc5"
+
+      - name: Train model and create results
+        run: python train.py --data-dir data
+
+      - name: Commit the trained model and evaluation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add models/house_prices_xgboost.joblib results/metrics.json results/submission.csv
+          if ! git diff --cached --quiet; then
+            git commit -m "Add trained XGBoost model and prediction results"
+            git push
+          fi
